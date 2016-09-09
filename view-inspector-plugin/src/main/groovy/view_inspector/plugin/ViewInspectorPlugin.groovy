@@ -6,6 +6,8 @@ import org.aspectj.bridge.MessageHandler
 import org.aspectj.tools.ajc.Main
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.DependencyResolutionListener
+import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.tasks.compile.JavaCompile
 
 class ViewInspectorPlugin implements Plugin<Project> {
@@ -17,17 +19,27 @@ class ViewInspectorPlugin implements Plugin<Project> {
     }
 
     project.dependencies {
-      debugCompile 'com.github.xfumihiro.view-inspector:view-inspector-runtime:0.1.2-SNAPSHOT'
+      debugCompile 'com.github.xfumihiro.view-inspector:view-inspector-runtime:0.2.1-SNAPSHOT'
+
+      // Android dependencies
+      debugCompile 'com.android.support:appcompat-v7:21.0.3'
+
+      // AspectJ dependencies
       debugCompile 'org.aspectj:aspectjrt:1.8.6'
+
+      // Dagger dependencies
+      debugCompile 'com.google.dagger:dagger:2.0.1'
+
+      // Third-party dependencies
       debugCompile('com.google.dexmaker:dexmaker:1.1') {
         transitive = true
       }
-      debugCompile 'com.google.dagger:dagger:2.0.1'
+      debugCompile 'com.jakewharton.scalpel:scalpel:1.1.2'
       debugCompile 'com.f2prateek.rx.preferences:rx-preferences:1.0.0'
       debugCompile 'com.github.frankiesardo:auto-parcel:0.3'
-      debugCompile 'com.jakewharton.scalpel:scalpel:1.1.2'
-      debugCompile 'com.android.support:appcompat-v7:21.0.3'
     }
+
+    project.extensions.create("viewInspector", ViewInspectorPluginExtension)
 
     final def log = project.logger
     final def variants = project.android.applicationVariants
@@ -87,11 +99,32 @@ class ViewInspectorPlugin implements Plugin<Project> {
       task.outputDir = new File("${sourcePath}/${packageName.replace('.', '/')}")
       task.inputFiles = project.fileTree(dir: variant.mergeResources.outputDir)
           .matching { include 'layout*/*.xml' }
+      task.excludePackages = project.viewInspector.excludePackages
 
       // Set task dependencies
       task.dependsOn variant.mergeResources
       variant.javaCompile.source sourcePath
       variant.javaCompile.dependsOn task
     }
+
+    // Add view-inspector-aspect library dependency according to the compileSdkVersion
+    // NOTE: This solution involves behavior which has been deprecated and is scheduled to be removed in Gradle 3.0.
+    project.getGradle().addListener(new DependencyResolutionListener() {
+      @Override
+      void beforeResolve(ResolvableDependencies resolvableDependencies) {
+        if (project.android.compileSdkVersion == 'android-23') {
+          project.dependencies
+              .add('debugCompile', project.dependencies.create(
+              'com.github.xfumihiro.view-inspector:view-inspector-aspect-v23:0.2.1-SNAPSHOT'))
+        } else {
+          project.dependencies
+              .add('debugCompile', project.dependencies.create(
+              'com.github.xfumihiro.view-inspector:view-inspector-aspect:0.2.1-SNAPSHOT'))
+        }
+      }
+
+      @Override
+      void afterResolve(ResolvableDependencies resolvableDependencies) {}
+    })
   }
 }

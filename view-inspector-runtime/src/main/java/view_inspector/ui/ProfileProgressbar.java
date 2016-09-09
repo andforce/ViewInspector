@@ -31,7 +31,7 @@ import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
 
   @Inject public ProfileProgressbar(Context context) {
     super(context);
-    inflate(context, R.layout.progressbar, this);
+    inflate(context, R.layout.view_inspector_progressbar, this);
     mProgressbar = (ProgressBar) findViewById(R.id.progressbar);
     mProgressbar.setIndeterminate(false);
     mProgressbar.setMax(100);
@@ -40,9 +40,9 @@ import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
 
   public static WindowManager.LayoutParams createLayoutParams(Context context) {
     Resources res = context.getResources();
-    mLayoutHeight = res.getDimensionPixelSize(R.dimen.toolbar_height);
-    if (Build.VERSION.SDK_INT > 22) { // LOLLIPOP_MR1
-      mLayoutHeight = res.getDimensionPixelSize(R.dimen.toolbar_height_m);
+    mLayoutHeight = res.getDimensionPixelSize(R.dimen.view_inspector_toolbar_height);
+    if (Build.VERSION.SDK_INT == 23) { // MARSHMALLOW
+      mLayoutHeight = res.getDimensionPixelSize(R.dimen.view_inspector_toolbar_height_m);
     }
 
     final WindowManager.LayoutParams params =

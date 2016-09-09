@@ -57,21 +57,23 @@ import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
     super(context);
     ViewInspector.runtimeComponentMap.get(context).inject(this);
     mContext = context;
-    inflate(context, R.layout.toolbar, this);
+    inflate(context, R.layout.view_inspector_toolbar, this);
 
     Resources resources = mContext.getResources();
-    mToolbarWidth = resources.getDimensionPixelSize(R.dimen.toolbar_header_width)
-        + resources.getDimensionPixelSize(R.dimen.toolbar_icon_width) * TOOLBAR_MENU_ITEMS;
-    mToolbarClosedWidth = resources.getDimensionPixelSize(R.dimen.toolbar_closed_width);
+    mToolbarWidth = resources.getDimensionPixelSize(R.dimen.view_inspector_toolbar_header_width)
+        + resources.getDimensionPixelSize(R.dimen.view_inspector_toolbar_icon_width)
+        * TOOLBAR_MENU_ITEMS;
+    mToolbarClosedWidth =
+        resources.getDimensionPixelSize(R.dimen.view_inspector_toolbar_closed_width);
   }
 
   public static WindowManager.LayoutParams createLayoutParams(Context context) {
     Resources res = context.getResources();
-    int width = res.getDimensionPixelSize(R.dimen.toolbar_header_width)
-        + res.getDimensionPixelSize(R.dimen.toolbar_icon_width) * TOOLBAR_MENU_ITEMS;
-    int height = res.getDimensionPixelSize(R.dimen.toolbar_height);
-    if (Build.VERSION.SDK_INT > 22) { // LOLLIPOP_MR1
-      height = res.getDimensionPixelSize(R.dimen.toolbar_height_m);
+    int width = res.getDimensionPixelSize(R.dimen.view_inspector_toolbar_header_width)
+        + res.getDimensionPixelSize(R.dimen.view_inspector_toolbar_icon_width) * TOOLBAR_MENU_ITEMS;
+    int height = res.getDimensionPixelSize(R.dimen.view_inspector_toolbar_height);
+    if (Build.VERSION.SDK_INT == 23) { // MARSHMALLOW
+      height = res.getDimensionPixelSize(R.dimen.view_inspector_toolbar_height_m);
     }
 
     final WindowManager.LayoutParams params =
@@ -186,10 +188,10 @@ import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
     animator.start();
     if (mToolbar.getTranslationX() < mToolbarClosedWidth) {
       mToggleButton.setImageDrawable(
-          getResources().getDrawable(R.drawable.ic_chevron_left_white_24px));
+          getResources().getDrawable(R.drawable.ic_chevron_left_white_24dp));
     } else {
       mToggleButton.setImageDrawable(
-          getResources().getDrawable(R.drawable.ic_chevron_right_white_24px));
+          getResources().getDrawable(R.drawable.ic_chevron_right_white_24dp));
     }
   }
 
@@ -200,7 +202,7 @@ import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
     animator.setInterpolator(new DecelerateInterpolator());
     animator.start();
     mToggleButton.setImageDrawable(
-        getResources().getDrawable(R.drawable.ic_chevron_left_white_24px));
+        getResources().getDrawable(R.drawable.ic_chevron_left_white_24dp));
   }
 
   @Override public void onProfileDone() {

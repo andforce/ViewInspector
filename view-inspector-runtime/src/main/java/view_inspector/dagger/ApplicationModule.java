@@ -8,6 +8,8 @@ import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import dagger.Module;
 import dagger.Provides;
+import java.util.HashSet;
+import java.util.Set;
 import javax.inject.Singleton;
 import view_inspector.R;
 import view_inspector.dagger.qualifier.BypassInterceptor;
@@ -21,6 +23,7 @@ import view_inspector.dagger.qualifier.ShowMargin;
 import view_inspector.dagger.qualifier.ShowMeasureCount;
 import view_inspector.dagger.qualifier.ShowOutline;
 import view_inspector.dagger.qualifier.ShowPadding;
+import view_inspector.dagger.qualifier.ViewFilter;
 import view_inspector.dagger.qualifier.ViewTag;
 import view_inspector.database.DbOpenHelper;
 
@@ -78,7 +81,7 @@ import static android.content.Context.WINDOW_SERVICE;
 
   @Provides @Singleton @LogViewEvents Preference<Boolean> provideLogViewEventsFlag(
       RxSharedPreferences prefs) {
-    return prefs.getBoolean("logViewEvents", true);
+    return prefs.getBoolean("logViewEvents", false);
   }
 
   @Provides @Singleton @Scalpel3D Preference<Boolean> provideScalpel3dFlag(
@@ -101,6 +104,11 @@ import static android.content.Context.WINDOW_SERVICE;
     return prefs.getBoolean("showMeasureCount", false);
   }
 
+  @Provides @Singleton @ViewFilter Preference<Set<String>> provideViewFilterSet(
+      RxSharedPreferences prefs) {
+    return prefs.getStringSet("viewFilter", new HashSet<String>());
+  }
+
   @Provides @Singleton SQLiteOpenHelper provideDbOpenHelper(Application application) {
     return new DbOpenHelper(application);
   }
@@ -110,6 +118,6 @@ import static android.content.Context.WINDOW_SERVICE;
   }
 
   @Provides @Singleton @ViewTag String provideViewTag() {
-    return application.getResources().getString(R.string.view_tag);
+    return application.getResources().getString(R.string.view_inspector_view_tag);
   }
 }

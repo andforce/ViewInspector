@@ -38,7 +38,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.github.xfumihiro.view-inspector:view-inspector-plugin:0.1.1'
+    classpath 'com.github.xfumihiro.view-inspector:view-inspector-plugin:0.2.0'
   }
 }
 
@@ -46,7 +46,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'view-inspector'
 ```
 
-Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
+To exclude packages:
+```
+viewInspector {
+  excludePackages = ['android.widget.Space', 'com.squareup.leakcanary.internal']
+}
+```
+
+[SNAPSHOTS][snap] of the development version. [[usage][snap_sample]]
 
 Inspirations & Dependencies
 ---------------------------
@@ -82,4 +89,5 @@ License
     See the License for the specific language governing permissions and
     limitations under the License.
 
-[snap]: https://oss.sonatype.org/content/repositories/snapshots/
+[snap]: https://oss.sonatype.org/content/repositories/snapshots/com/github/xfumihiro/view-inspector/view-inspector-plugin/
+[snap_sample]:https://github.com/xfumihiro/ViewInspector/blob/master/sample/build.gradle

@@ -1,7 +1,7 @@
 package view_inspector.util;
 
+import android.content.res.Resources;
 import android.support.v7.internal.widget.ActionBarOverlayLayout;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import view_inspector.ViewInspector;
@@ -9,7 +9,11 @@ import view_inspector.ViewInspector;
 public final class ViewUtil {
 
   public static String getViewId(View view) {
-    return view.getId() > 0 ? view.getResources().getResourceName(view.getId()) : "";
+    try {
+      return view.getId() > 0 ? view.getResources().getResourceName(view.getId()) : "";
+    } catch (Resources.NotFoundException e) {
+      return "";
+    }
   }
 
   public static String getSimpleViewId(View view) {
@@ -40,7 +44,7 @@ public final class ViewUtil {
   }
 
   public static boolean isNotSupportedViewClass(View view) {
-    return view instanceof ActionBarOverlayLayout;
+    return view instanceof ActionBarOverlayLayout || isAndroidInternalViewClass(view);
   }
 
   public static boolean isLevelTwoView(View view) {
@@ -49,6 +53,16 @@ public final class ViewUtil {
 
   public static boolean isViewRoot(View view) {
     return view.equals(ViewInspector.viewRoot);
+  }
+
+  public static boolean isActionBarOverlayLayout(View view) {
+    return view.getClass().getName().equals("com.android.internal.widget.ActionBarOverlayLayout");
+  }
+
+  private static boolean isAndroidInternalViewClass(View view) {
+    String viewClassName = view.getClass().getName();
+    return viewClassName.startsWith("android.support.v7.internal") || viewClassName.startsWith(
+        "com.android.internal");
   }
 
   private ViewUtil() {
